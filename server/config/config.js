@@ -20,13 +20,9 @@ process.env.CADUCIDAD_TOKEN = 60 * 60 * 24 * 30;
 // ===========================
 // SEED
 // ===========================
-// SEED_PROD es hecha con config de heroku
-if (process.env.NODE_ENV === 'dev') {
-    SEED = 'Este-es-el-seed-desarrollo';
-} else {
-    SEED = process.env.SEED_PROD;
-}
-process.env.SEED = SEED;
+// SEED es hecha con config de heroku
+
+process.env.SEED = process.env.SEED || 'Este-es-el-seed-desarrollo';
 
 
 // ===========================
