@@ -26,7 +26,8 @@ let connect = async() => {
         const resBase = await mongoose.connect(process.env.URLDB, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            useCreateIndex: true
+            useCreateIndex: true,
+            useFindAndModify: true
         });
         const respuesta = resBase.connection
             // console.log(respuesta);
