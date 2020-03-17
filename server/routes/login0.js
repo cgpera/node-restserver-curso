@@ -31,7 +31,7 @@ app.post('/login', (req, res) => {
             return res.status(400).json({
                 ok: false,
                 err: {
-                    message: '(Usuario) o contraseña incorrectos'
+                    message: '(Email) o contraseña incorrectos'
                 }
             });
         }
@@ -41,7 +41,7 @@ app.post('/login', (req, res) => {
             return res.status(400).json({
                 ok: false,
                 err: {
-                    message: 'Usuario o (contraseña) incorrectos'
+                    message: 'Email o (contraseña) incorrectos'
                 }
             });
         }
@@ -62,7 +62,7 @@ app.post('/login', (req, res) => {
 });
 
 
-// Configuraciones de Google
+// Configuración de Google
 async function verify(token) {
     const ticket = await client.verifyIdToken({
         idToken: token,
@@ -73,7 +73,7 @@ async function verify(token) {
     const payload = ticket.getPayload();
 
     return {
-        nombre: payload.name,
+        name: payload.name,
         email: payload.email,
         img: payload.picture,
         google: true
@@ -82,7 +82,7 @@ async function verify(token) {
 }
 
 
-app.post('/google', async(req, res) => {
+app.post('/google', async (req, res) => {
 
     let token = req.body.idtoken;
 
@@ -110,7 +110,7 @@ app.post('/google', async(req, res) => {
                 return res.status(400).json({
                     ok: false,
                     err: {
-                        message: 'Debe de usar su autenticación normal'
+                        message: 'Debe autenticarse con el usuario normal'
                     }
                 });
             } else {
@@ -128,7 +128,7 @@ app.post('/google', async(req, res) => {
             }
 
         } else {
-            // Si el usuario no existe en nuestra base de datos
+            // usuarioDB no existe en la base de datos
             let usuario = new Usuario();
 
             usuario.nombre = googleUser.nombre;
