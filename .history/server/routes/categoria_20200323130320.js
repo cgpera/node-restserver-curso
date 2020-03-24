@@ -4,8 +4,10 @@ const _ = require("underscore");
 let Categoria = require("../models/categoria");
 
 // const verifica = require('../middlewares/autenticacion').verificaToken;
-
-const { verificaToken, verificaAdmin_Role } = require("../middlewares/autenticacion");
+const {
+    verificaToken,
+    verificaAdmin_Role
+} = require("../middlewares/autenticacion");
 
 const app = express();
 
@@ -14,52 +16,37 @@ const app = express();
 //===============================
 
 app.get("/categoria", verificaToken, (req, res) => {
-    //    Categoria.find({}, "nombre usuario")
-    Categoria.find({})
-        .sort('nombre')
-        .populate('usuario', 'nombre email')
-        //.populate(otra tabla, campos)
-        // para llenar otra tabla....
-        .exec((err, categorias) => {
-            if (err) {
-                return res.status(400).json({
-                    ok: false,
-                    err //: err
-                });
-            }
-            res.json({
-                ok: true,
-                categorias: categorias
+    Categoria.find({}, "nombre usuario").exec((err, categorias) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err //: err
             });
+        }
+        res.json({
+            ok: true,
+            categorias: categorias
         });
+    });
 });
 
 //===============================
-// Mostrar una categoría
+// Cambiar una categoría
 //===============================
 
 app.get("/categoria/:id", verificaToken, (req, res) => {
     let id = req.params.id;
 
-    Categoria.findById(id, (err, categoriaDB) => {
+    Categoria.findById(id, (err, categoria) => {
         if (err) {
-            return res.status(500).json({
+            return res.status(400).json({
                 ok: false,
                 err //: err
             });
         }
-        if (!categoriaDB) {
-            return res.status(400).json({
-                ok: false,
-                err: {
-                    message: 'No se encontró la categoría o el ID no es correcto'
-                }
-            });
-        }
-
         res.json({
             ok: true,
-            categoria: categoriaDB
+            categoria
         });
     });
 });
@@ -69,7 +56,7 @@ app.get("/categoria/:id", verificaToken, (req, res) => {
 //  Crear una categoría
 //===============================
 
-app.post("/categoria", verificaToken, (req, res) => {
+app.post("/categoria", [verificaToken, verificaAdmin_Role], (req, res) => {
     let body = req.body;
     let usuario = req.usuario;
 
@@ -80,18 +67,10 @@ app.post("/categoria", verificaToken, (req, res) => {
 
     categoria.save((err, categoriaDB) => {
         if (err) {
-            return res.status(500).json({
+            return res.status(400).json({
                 ok: false,
                 err //: err
             });
-        }
-        if (!categoriaDB) {
-            return res.status(400).json({
-                ok: false,
-                err: {
-                    message: 'No se pudo crear la categoría'
-                }
-            })
         }
 
         res.json({
@@ -107,31 +86,18 @@ app.post("/categoria", verificaToken, (req, res) => {
 
 app.put("/categoria/:id", [verificaToken, verificaAdmin_Role], function(req, res) {
     let id = req.params.id;
-    // let body = _.pick(req.body, ["nombre"]);
-
-    // o bien...
-
-    let body = {
-        nombre: body.nombre
-    }
+    let body = _.pick(req.body, ["nombre"]);
 
     //opts = { new: true, runValidators: true }
     opts = { new: true, useFindAndModify: false };
 
     Categoria.findByIdAndUpdate(id, body, opts, (err, categoriaDB) => {
         if (err) {
-            return res.status(500).json({
+            return res.status(400).json({
                 ok: false,
                 err
             });
         }
-        if (!categoriaDB) {
-            return res.status(400).json({
-                ok: false,
-                err
-            })
-        }
-
         res.json({
             ok: true,
             categoria: categoriaDB
@@ -153,7 +119,7 @@ app.delete("/categoria/:id", [verificaToken, verificaAdmin_Role], function(req, 
     Categoria.findByIdAndRemove(id, opts, (err, categoriaBorrada) => {
 
         if (err) {
-            return res.status(500).json({
+            return res.status(400).json({
                 ok: false,
                 err
             });
@@ -163,16 +129,14 @@ app.delete("/categoria/:id", [verificaToken, verificaAdmin_Role], function(req, 
             return res.status(400).json({
                 ok: false,
                 err: {
-                    message: 'Id de categoría no existente'
+                    message: 'Categoría no existente'
                 }
             })
         }
 
         res.json({
             ok: true,
-            message: 'categoría borrada'
-                //            categoria: categoriaBorrada  
-                // devuelvo un mensaje en lugar del ítem borrado
+            categoria: categoriaBorrada
         });
     });
 });

@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 
 let verificaToken = (req, res, next) => {
 
-    let token = req.get('token');
+    let token = req.get('token');  // Lee el token desde el Header de la petición en la ruta que quiera chequear la identidad ("el token")
 
     jwt.verify(token, process.env.SEED, (err, decoded) => {
 
@@ -41,6 +41,7 @@ let verificaAdmin_Role = (req, res, next) => {
             }
         })
     }
+
     next();
 
 }

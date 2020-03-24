@@ -4,8 +4,10 @@ const _ = require("underscore");
 let Categoria = require("../models/categoria");
 
 // const verifica = require('../middlewares/autenticacion').verificaToken;
-
-const { verificaToken, verificaAdmin_Role } = require("../middlewares/autenticacion");
+const {
+    verificaToken,
+    verificaAdmin_Role
+} = require("../middlewares/autenticacion");
 
 const app = express();
 
@@ -18,8 +20,6 @@ app.get("/categoria", verificaToken, (req, res) => {
     Categoria.find({})
         .sort('nombre')
         .populate('usuario', 'nombre email')
-        //.populate(otra tabla, campos)
-        // para llenar otra tabla....
         .exec((err, categorias) => {
             if (err) {
                 return res.status(400).json({
@@ -35,7 +35,7 @@ app.get("/categoria", verificaToken, (req, res) => {
 });
 
 //===============================
-// Mostrar una categoría
+// Cambiar una categoría
 //===============================
 
 app.get("/categoria/:id", verificaToken, (req, res) => {

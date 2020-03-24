@@ -35,7 +35,7 @@ app.get("/categoria", verificaToken, (req, res) => {
 });
 
 //===============================
-// Mostrar una categoría
+// Cambiar una categoría
 //===============================
 
 app.get("/categoria/:id", verificaToken, (req, res) => {

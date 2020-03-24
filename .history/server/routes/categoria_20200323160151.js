@@ -4,8 +4,10 @@ const _ = require("underscore");
 let Categoria = require("../models/categoria");
 
 // const verifica = require('../middlewares/autenticacion').verificaToken;
-
-const { verificaToken, verificaAdmin_Role } = require("../middlewares/autenticacion");
+const {
+    verificaToken,
+    verificaAdmin_Role
+} = require("../middlewares/autenticacion");
 
 const app = express();
 
@@ -14,12 +16,7 @@ const app = express();
 //===============================
 
 app.get("/categoria", verificaToken, (req, res) => {
-    //    Categoria.find({}, "nombre usuario")
-    Categoria.find({})
-        .sort('nombre')
-        .populate('usuario', 'nombre email')
-        //.populate(otra tabla, campos)
-        // para llenar otra tabla....
+    Categoria.find({}, "nombre usuario")
         .exec((err, categorias) => {
             if (err) {
                 return res.status(400).json({
@@ -35,31 +32,22 @@ app.get("/categoria", verificaToken, (req, res) => {
 });
 
 //===============================
-// Mostrar una categoría
+// Cambiar una categoría
 //===============================
 
 app.get("/categoria/:id", verificaToken, (req, res) => {
     let id = req.params.id;
 
-    Categoria.findById(id, (err, categoriaDB) => {
+    Categoria.findById(id, (err, categoria) => {
         if (err) {
-            return res.status(500).json({
+            return res.status(400).json({
                 ok: false,
                 err //: err
             });
         }
-        if (!categoriaDB) {
-            return res.status(400).json({
-                ok: false,
-                err: {
-                    message: 'No se encontró la categoría o el ID no es correcto'
-                }
-            });
-        }
-
         res.json({
             ok: true,
-            categoria: categoriaDB
+            categoria
         });
     });
 });
@@ -69,7 +57,7 @@ app.get("/categoria/:id", verificaToken, (req, res) => {
 //  Crear una categoría
 //===============================
 
-app.post("/categoria", verificaToken, (req, res) => {
+app.post("/categoria", [verificaToken, verificaAdmin_Role], (req, res) => {
     let body = req.body;
     let usuario = req.usuario;
 

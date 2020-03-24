@@ -3,7 +3,7 @@ const Usuario = require('../models/usuario');
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
 // const verifica = require('../middlewares/autenticacion').verificaToken;
-const { verificaToken, verificaAdmin_Role } = require('../middlewares/autenticacion');
+const {verificaToken, verificaAdmin_Role} = require('../middlewares/autenticacion');
 
 const app = express()
 
@@ -107,7 +107,7 @@ app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, re
     // cambiando la marca de estado
     Usuario.findByIdAndUpdate(id, cambiaEstado, { new: true }, (err, usuarioBorrado) => {
         if (err) {
-            return res.status(500).json({
+            return res.status(400).json({
                 ok: false,
                 err
             })
