@@ -10,4 +10,4 @@ app.use(require('./upload'));
 app.use(require('./imagenes'));
 
 
-module.exports = app
+module.exports = app;
